@@ -1,0 +1,12 @@
+#+title: Readme
+* Notes about competitive programming problems
+
+In this repository I'll store my notes about Leetcode-like problems that I solve during my interview preparation.
+
+Inspired by  https://github.com/xiaoylu/leetcode_category/tree/master notes.
+
+The purpose of this is to improve my classification skills while I complete competitive programming questions. With that in mind I'll cover different patterns in their separate folders and will include notes on how I addressed and solved each leetcode problem.
+
+** Patterns covered:
+*** Sliding window
+

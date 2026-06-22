@@ -1,0 +1,65 @@
+#+title: Readme
+* Bitwise manipulation
+This problems  involve performing bitwise operations over the input.
+* Problems:
+** [[https://leetcode.com/problems/add-binary/description/][67. Add Binary]]
+
+To solve this problem I started by finishing early for easy inputs.
+#+BEGIN_SRC python
+if a == 0:
+    return b
+elif b == 0
+    return a
+#+END_SRC
+
+Then I reordered the input to put the longest input in a. Then I traversed a and b in reverse order and for every bit I add the two bits plus the carry_on.
+
+To check the result of the operation for carry_on and the result digit we use bitwise operations against 1 and 2.
+
+#+BEGIN_SRC python
+class Solution:
+    def addBinary(self, a: str, b: str) -> str:
+        if a == '0':
+            return b
+        elif b == '0':
+            return a
+
+        # Longest string goes into a
+        if len(a) < len(b):
+            a, b = b, a
+
+        carry_on = 0
+        ret = []
+        for an, bn in zip(a[::-1], b[::-1]): 
+            result = int(an) + int(bn) + carry_on 
+            if result & 1:
+                ret.append('1')
+            else:
+                ret.append('0')
+            if result & 2:
+                carry_on = 1
+            else:
+                carry_on = 0
+        
+        if len(a) > len(b):
+            # This traversal was the most difficult operation. Had issues when len(a)<=len(b)
+            for aj in a[len(a)-len(b)-1::-1]:
+                result = int(aj) + carry_on
+                if result & 1:
+                    ret.append('1')
+                else:
+                    ret.append('0')
+                
+                if result & 2:
+                    carry_on = 1
+                else:
+                    carry_on = 0
+        
+        if carry_on:
+            ret.append('1')
+        
+        return ''.join(reversed(ret))
+#+END_SRC
+
+
+

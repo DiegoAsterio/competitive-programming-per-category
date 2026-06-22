@@ -1,0 +1,74 @@
+#+title: Readme
+* Sliding Window
+** Initial thoughts
+This is my third time preparing for an interview and I realized I had somehow been able to join two big-tech companies without studying this pattern in depth.
+
+After reading Steven Skienna's the algorithm design manual I did understand similar patterns such as the hash value for finding a subsequence in a long DNA sequence. This can be similar to the sliding pattern problem however we don't need to worry a lot about the elements inside the sliding window.
+
+I really encountered the pattern after a mock interview with my senior Artur Sachanka. He discussed with me a themed version of https://leetcode.com/problems/longest-substring-without-repeating-characters/description/. I have to say that I did encounter some problems while solving it.
+
+1. While suggesting examples I completely missed the corner case where a repeated character appears and the characters between that second character and the first are important to the solution e.g. "abcdefgdhijklmn" the solution is "efgdhijklmn" while I thought that we should start from the second 'd' what results in "dhijklmn".
+2. I thought we needed some kind of auxiliary object to store last_seen_at and every time I found a duplicate I disposed that object and created a new one resulting in quadratic memory complexity.
+3. I totally missed the opportunity to optimize my solution to the problem and decided to recalculate the sliding window all the time.
+
+** Questions:
+
+The following questions can be solved with a sliding window pattern.
+
+*** [[https://leetcode.com/problems/maximum-sum-of-distinct-subarrays-with-length-k/description/][2461. Maximum Sum of Distinct Subarrays With Length K]]
+**** Notes:
+To solve this problem I followed the sliding window pattern. 
+
+I initialized 5 variables: 
+1. start_window: an index marking the beginning of the sliding window.
+2. len_of_subarray_values: a variable that stores how many elements the window stores.
+3. sum_subarray_values = 0 that stores the partial sum of all not repeated values that are inside the sliding window. 
+4. last_seen_at is a dictionary that helps us understand at what index did we see a value for the first time this is useful because since we need to perform deduplication it can happen that while we update the start of the sliding window we need to remove a value from the partial sum and other times not.
+5. subarray_sums is an array where we store all subarray sums. It can be transformed into an int value.
+
+After initialization we move the end window from 0 to nums.length -1. At each step we try to add the value at the end point of the window. This happens only if we have never seen the value or if on the contrary we did see the value but outside of the current window. Then I update the last time I saw this value to the present index. 
+
+When the sliding window is ready (i.e. we have passed the first k elements we start checking if there are k distinct elements in the sliding window and appending the current sum to the auxiliary structure that stores all subarray_sums. What we do next is that we move the starting point of the sliding window right. That sometimes means removing start_value element from the sum when the last time we saw start_value is outside the sliding window.
+*** [[https://leetcode.com/problems/longest-substring-without-repeating-characters/description/][3.Longest Substring Without Repeating Characters]]
+**** Notes:
+To solve this problem I followed a simple sliding window pattern.
+
+I initialized three variables:
+1. last_seen_at: a dictionary that would store the index at which a char was seen for the last time.
+2. start_window: index pointing to the leftmost element of the sliding window.
+3. length: a value storing the max lenght of the longest substring without repeated elements.
+
+At every iteration we would try to increase the window to the right; one step at a time. If the current rightmost element had been seen, inside the current sliding window (IMPORTANT), we need to move the left pointer of the sliding window to the right of the last occurrence. 
+
+After that we store the current element in last_seen_at and try to update the maxium length of the array with unique elements.
+
+I was able to submit this correctly in the second try. First try I missed the fact that the only relevant numbers are those inside the sliding window...
+
+Last solution is more performant, elegant and clean than the one I shared with Artur.
+*** [[https://leetcode.com/problems/minimum-size-subarray-sum/description/][209. Minimum Size Subarray Sum]]
+**** Notes: to solve this problem I followed a simple sliding window pattern.
+
+Initialized three variables:
+1. min_length: the variable storing the returning value (defaults to + infinity).
+2. start_window: left of the sliding window
+3. s: variable were we accumulate all the summands.
+
+For every iteration we move the right of the sliding window forward. At each step we add the value at the rightmost point of the sliding window to s.
+
+While s is greater than the target value we recompute the min_length of the size of the subarray (since it's fulfilling the condigiton s >= target) we remove elements from the left of the sliding window and substract them from s.
+   
+   
+
+** Post-mortem
+I did encounter slight modifications from the sliding window pattern that became extremely complicated. One such problem is the one that lead me to find the xiaoylu's repo in the first place.
+*** [[https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/description/][862. Shortest Subarray with Sum at Least K]]
+I was trying to find the leetcode version of this explanation: https://glucko.github.io/codeprep/GrokkCode/2._Pattern_Sliding_Window/3._Smallest_Subarray_with_a_given_sum_(easy)/1.2_Smallest_Subarray_with_a_given_sum_(easy)_-.html
+
+However including negative integers actually makes the problem much more difficult. The interested reader can refer to https://github.com/xiaoylu/leetcode_category/tree/master/MonotonicQueue for a better understanding of how to solve the problem.
+
+
+
+
+
+
+

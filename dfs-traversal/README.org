@@ -1,0 +1,35 @@
+#+title: Readme
+* DFS traversal
+In this sort of problems we need to prioritize exploring the tree in depth instead of in breadth for that what we use is a stack (i.e. fifo traversal).
+* Problems:
+** [[https://leetcode.com/problems/diameter-of-binary-tree/description/][543. Diameter of Binary Tree]]
+
+To complete this problem I performed a postorder traversal of the binary tree using two stacks. Did this for memory optimization we won't have stack overflow due to recursion.
+
+In the second while (the postorder while) we do two things: 1 calculate the heights of both subtrees 2. try to verify if the current difference between max lengths of bothe subtrees is greater than the current diameter.
+
+#+BEGIN_SRC python
+class Solution:
+    def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+        stack1 = [root]
+        stack2 = []
+        longest_path_between_two_nodes = 0
+
+        while stack1:
+            current_node = stack1.pop()
+            stack2.append(current_node)
+            if current_node.left:
+                stack1.append(current_node.left)
+            if current_node.right:
+                stack1.append(current_node.right)
+        
+        while stack2:
+            current_node = stack2.pop()
+            left_subtree_height = current_node.left.val + 1 if current_node.left else 0
+            right_subtree_height = current_node.right.val + 1 if current_node.right else 0
+            current_node.val = max(left_subtree_height, right_subtree_height)
+            longest_path_between_two_nodes = max(longest_path_between_two_nodes, left_subtree_height + right_subtree_height)
+        
+        return longest_path_between_two_nodes
+#+END_SRC
+
