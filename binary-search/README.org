@@ -1,0 +1,90 @@
+#+title: Binary search
+These are problems that involve efficiently finding the insertion place of an element in an array using the binary search algorithm. Other times a similar reasoning can be applied over an array where some of the elements in the array fulfill a boolean predicate anb other's don't.
+
+The binary search that I use is the following:
+
+#+BEGIN_SRC python
+    def binarySearch(self, list, elem):
+        l, r = 0, len(list)
+        while l + 1 < r:
+            mid = (l+r)//2
+            if list[mid] <= elem:
+                l = mid
+            else:
+                r = mid
+        return l
+#+END_SRC
+
+Common pitfall: calculating mid = l+r//2 (division has precedence over sum).
+* Problems:
+** [[https://leetcode.com/problems/insert-interval/description/][57. Insert Interval]]
+This was a very painful problem!
+
+I solved it by flattening the intervals and then found what were the positions that a binary search gave over the intervals array.
+
+Then I came up with rules on how to build the array that will be returned.
+
+I spent >1h solving it not sure if this is the best way of showing if I know how to program or not...
+
+I was the fastest response in leetcode. Sth. to be proud of I guess.
+
+#+BEGIN_SRC python
+class Solution:
+    def binarySearch(self, list, elem):
+        l, r = 0, len(list)
+        while l + 1 < r:
+            mid = (l+r)//2
+            if list[mid] <= elem:
+                l = mid
+            else:
+                r = mid
+        return l
+
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        if not intervals:
+            return [newInterval]
+
+        flattened = [x_n for interval in intervals for x_n in interval]
+
+        start_new_interval, end_new_interval = newInterval
+
+        position_start_new_interval = self.binarySearch(flattened, start_new_interval)
+        position_end_new_interval = self.binarySearch(flattened, end_new_interval)
+
+        ret = []
+
+        # If start_i < end_i <= start_new_interval
+        if position_start_new_interval % 2:
+            # If end_i < start_new_interval
+            if flattened[position_start_new_interval] != start_new_interval:
+                ret += flattened[:position_start_new_interval+1] # -> ret += [[start_0, end_0],...,[start_i, end_i]]
+            else:
+                ret += flattened[:position_start_new_interval-1] # -> ret += [[start_0, end_0],...,[start_i-1, end_i-1]]
+                start_new_interval = flattened[position_start_new_interval-1] # -> start_new_interval = start_i
+        # If start_new_interval < end_i
+        else:
+            ret += flattened[:position_start_new_interval]  # -> ret += [[start_0, end_0],...,[start_i-1, end_i-1]]
+            # If start_i < start_new_interval 
+            if start_new_interval > flattened[position_start_new_interval]:
+                start_new_interval = flattened[position_start_new_interval] # -> start_new_interval = start_i
+
+        # If start_j < end_j <= end_new_interval        
+        if position_end_new_interval % 2:
+            ret += [start_new_interval, end_new_interval] # -> ret += [start_new_interval, end_new_interval]
+            ret += flattened[position_end_new_interval+1:] # -> ret += [[start_j+1, end_j+1], ...]
+        # If end_new_interval < end_j
+        else:
+            # If end_new_interval < start_j
+            if end_new_interval < flattened[position_end_new_interval]:
+                ret += [start_new_interval, end_new_interval] + flattened[position_end_new_interval:] # -> ret += [start_new_interval, end_new_interval] + [[start_j,end_j], ...]
+            # If start_j <= end_new_interval < end_j
+            else:
+                ret += [start_new_interval, flattened[position_end_new_interval + 1]] + flattened[position_end_new_interval + 2:] # -> ret += [start_new_interval, end_j], [[start_j+1, end_j+1], ...]
+    
+        return [[start_i, end_i] for start_i, end_i in zip(ret[::2], ret[1::2])]
+#+END_SRC
+
+
+
+
+
