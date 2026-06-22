@@ -1,5 +1,4 @@
-#+title: Readme
-* Dynamic Programming
+#+title: Dynamic Programming
 Technique were you store/cache computations into a data structure (typically an array) and then reuse them to compute the next step of the function.
 
 There are two kind of dynamic programming.

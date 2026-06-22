@@ -1,5 +1,4 @@
-#+title: Readme
-* DFS traversal
+#+title: DFS traversal
 In this sort of problems we need to prioritize exploring the tree in depth instead of in breadth for that what we use is a stack (i.e. fifo traversal).
 * Problems:
 ** [[https://leetcode.com/problems/diameter-of-binary-tree/description/][543. Diameter of Binary Tree]]

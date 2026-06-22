@@ -1,5 +1,4 @@
-#+title: Readme
-* Sliding Window
+#+title: Sliding Window 
 ** Initial thoughts
 This is my third time preparing for an interview and I realized I had somehow been able to join two big-tech companies without studying this pattern in depth.
 

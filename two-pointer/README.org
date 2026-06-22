@@ -1,5 +1,4 @@
-#+title: Readme
-* Two pointers:
+#+title: Two pointers:
 These problems require two different pointers in order to calculate the final solution.
 * Problems:
 ** [[https://leetcode.com/problems/middle-of-the-linked-list/description/][876. Middle of the Linked List]]
