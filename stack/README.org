@@ -1,0 +1,37 @@
+#+title: Stacks
+Problems that can be solved using a stack.
+* Problems
+** [[https://leetcode.com/problems/evaluate-reverse-polish-notation/description/][Evaluate Reverse Polish Notation]]
+
+To complete this problem I traversed the input and at every token if it was an integer I added to the stack. If it was an operator we extract the top two elements from the stack place them in the correct order first the second operand and then the first apply the binary operator and put the result back into the stack.
+
+#+BEGIN_SRC python
+def evaluate_binary_operation(operator: str, left_operand: int, right_operand) -> int:
+    if operator == "+":
+        return left_operand + right_operand
+    elif operator == "-":
+        return left_operand - right_operand
+    elif operator == "*":
+        return left_operand * right_operand
+    elif operator == "/":
+        return int(left_operand / right_operand)
+    else:
+        raise RuntimeError(f"Incorrect operator: {operator}")
+
+
+class Solution:
+    def evalRPN(self, tokens: List[str]) -> int:
+        stack = [] 
+        for token in tokens: 
+            if token in "+-*/": 
+                b = stack.pop() 
+                a = stack.pop() 
+                result = evaluate_binary_operation(token, a, b)
+                stack.append(result) 
+            else:
+                stack.append(int(token))
+#+END_SRC
+
+Pitfall: I decided to use the integer division which results in incorrect results when the numerator is a negative number e.g. 6//-132 == -1 (?)
+
+

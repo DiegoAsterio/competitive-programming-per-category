@@ -13,4 +13,5 @@ The purpose of this is to improve my classification skills while I complete comp
 ** Dynamic programming
 ** Math
 ** Sliding window
+** Stack
 ** Two pointer
