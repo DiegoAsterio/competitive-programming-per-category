@@ -105,5 +105,41 @@ class Solution:
                     discovered[a][b] = True
         return ret
 #+END_SRC
+** [[https://leetcode.com/problems/binary-tree-level-order-traversal/description/][Binary Tree Level Order Traversal]]
+Very simple BFS traversal we add a height to the node that we are visiting at each point if the level/height changes we push the collection of elements in the prior level and start a new one.
 
+#+BEGIN_SRC python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        if not root:
+            return []
+
+        queue = [(root, 0)]
+        levels = []
+        current_level = []
+
+        while queue:
+            node, height = queue.pop(0)
+
+            if node.left:
+                queue.append((node.left, height+1))
+            if node.right:
+                queue.append((node.right, height+1))
+
+            if height > len(levels):
+                levels.append(current_level)
+                current_level = []
+            current_level.append(node.val)
+        
+        if current_level:
+            levels.append(current_level)
+        
+        return levels
+#+END_SRC
 
