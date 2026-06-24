@@ -1,0 +1,104 @@
+#+title: BFS traversal
+In this sort of problems we need to prioritize exploring th tree in breadth instead of in depth that can be done using recursion or a queue (i.e. LIFO)
+* Problems:
+** [[https://leetcode.com/problems/01-matrix/description/][01 Matrix]]
+
+The first solution I came up with is exploring the matrix up to n+m times and substracting the ones into an auxiliary matrix this is a quadratic algorithm over the size of the input.
+
+It looked like this:
+
+#+BEGIN_SRC python
+# Example 4:
+# 1 1 1
+# 1 1 1
+# 1 1 0
+# 
+# 1 1 1 # 1 1 1 
+# 1 1 0 # 1 1 1
+# 1 0 0 # 1 1 0
+#
+# 1 1 0 # 2 2 2 
+# 1 0 0 # 2 2 1
+# 0 0 0 # 2 1 0
+#
+# 1 0 0 # 3 3 2 
+# 0 0 0 # 3 2 1
+# 0 0 0 # 2 1 0
+#
+# 0 0 0 # 4 3 2 
+# 0 0 0 # 3 2 1
+# 0 0 0 # 2 1 0
+#+END_SRC
+
+I then thought that we could do a breadth-first traversal starting from the elements of the matrix that were 0. Every processed node will store 1 + the minimum value of their processed neighbours.
+
+#+BEGIN_SRC python
+# queue = [(2,2)]
+# 1 1 1 # X X X 
+# 1 1 1 # X X X
+# 1 1 0 # X X 0
+# queue = [(2,2)]
+# 1 1 1 # X X X 
+# 1 1 1 # X X X
+# 1 1 0 # X X 0
+# queue = [(1,2), (2, 1)]
+# 1 1 1 # X X X 
+# 1 1 1 # X X 1
+# 1 1 0 # X X 0
+# queue = [(1, 1), (0, 2), ]
+# 1 1 1 # X X X 
+# 1 1 1 # X X 1
+# 1 1 0 # X 1 0
+#+END_SRC
+The code that resulted from that was this:
+
+#+BEGIN_SRC python
+class Solution:
+    def neighbourhood(self, mat, i, j):
+        n = len(mat)
+        m = len(mat[0])
+
+        ret = []
+
+        if i > 0:
+            ret.append((i-1,j))
+        if i + 1 < n:
+            ret.append((i+1,j))
+        if j > 0:
+            ret.append((i,j-1))
+        if j + 1 < m:
+            ret.append((i,j+1))
+
+        return ret
+
+    def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
+        ret = []
+        visited = []
+        discovered = []
+        for row in mat:
+            ret.append([math.inf for elem in row])
+            visited.append([False for elem in row])
+            discovered.append([False  for elem in row])
+        
+        queue = []
+        for i, row in enumerate(mat):
+            for j, elem in enumerate(row):
+                if elem == 0:
+                    queue.append((i,j))
+                    discovered[i][j] = True
+        
+        while queue:
+            i, j = queue.pop(0)
+            visited[i][j] = True
+            if mat[i][j] == 0:
+                ret[i][j] = 0
+            for a, b in self.neighbourhood(mat, i, j):
+                if visited[a][b]:
+                    ret[i][j] = min(ret[i][j], ret[a][b]+1)
+                elif not discovered[a][b]:
+                    queue.append((a, b))
+                    discovered[a][b] = True
+        return ret
+#+END_SRC
+
+

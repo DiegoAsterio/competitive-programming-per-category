@@ -27,5 +27,64 @@ The intuition behind this algorithm is simple. We use an array for the dynamic p
 At every index i we want to store the maximum sum that you can calculate from array nums whose last index is i. Later we calculate max over the whole array.
 
 More deeply at every index the largest subarray for an array that ends up in that index is either adding the current number to the max sum of the element in the left or if that's a negative number it's always better to restart a group.
+** [[https://leetcode.com/problems/01-matrix/description/][01 Matrix]]
 
+After submitting my answer for 01 matrix I discovered that it was slower than 95% of all answers. This was pretty disappointing since my BFS was a linear algorithm.
 
+I then saw that there was a better answer that involves traversing the matrix two times and gives you the result in place.
+
+The intuition behind this solution is that the final result for each of the elements in the resulting matrix will come from a two directions path in the matrix. For that reason we traverse the matrix from the top left corner into the bottom right corner and at every point we try to calculate the distance to that point to a zero by updating the value with the min(left, up) + 1.
+
+That would give us for every point the closest zero that they have in their upper left section i.e.
+
+#+BEGIN_SRC python
+# 0 1 2 3 4
+# 1 2 3 4 5
+# 2 3 0 1 2
+# 3 4 1 2 3
+#+END_SRC
+
+Then we traverse it from the bottom right corner following the inverse steps and doing a similar update.
+
+It is clear that for every element if the closest zero was in either it's upper-left corner or bottom-right corner we would have it as a consequence of having calculated each of the points as the min of left, up and right, bottom respectively.
+
+What is less clear is that if the closest zero was in the upper-right or bottom-left we are taking that into account...
+
+Since the second pass happens over an already transformed matrix for every element all of the elements on it's RHS they already contain the minimum distance to any zero on top of them.
+
+With a similar argument one can prove that this also happens to those in the bottom-left.
+
+The solution is really cool. Credits to Mayowa Daniel that left a very nice [[https://leetcode.com/problems/01-matrix/description/][video in the comments]].
+
+#+BEGIN_SRC python
+class Solution:
+    def updateMatrixTopLeft(self, mat: List[List[int]], n: int, m: int) -> List[List[int]]:
+        for i in range(n):
+            for j in range(m):
+                if mat[i][j] > 0:
+                    up = mat[i-1][j] if i > 0 else math.inf
+
+                    left = mat[i][j-1] if j > 0 else math.inf
+
+                    mat[i][j] = min(up, left) + 1
+
+    def updateMatrixBottomRight(self, mat: List[List[int]], n: int, m: int) -> List[List[int]]:
+        for i in reversed(range(n)):
+            for j in reversed(range(m)):
+                if mat[i][j] > 0:
+                    down = mat[i+1][j] if i+1 < n else math.inf
+
+                    right = mat[i][j+1] if j+1 < m else math.inf
+
+                    mat[i][j] = min(mat[i][j], min(down, right) + 1)
+
+    def updateMatrix(self, mat: List[List[int]]) -> List[List[int]]:
+        n = len(mat)
+        m = len(mat[0])
+
+        self.updateMatrixTopLeft(mat, n, m)
+
+        self.updateMatrixBottomRight(mat, n, m)
+
+        return mat  
+#+END_SRC
