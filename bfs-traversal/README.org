@@ -50,7 +50,8 @@ I then thought that we could do a breadth-first traversal starting from the elem
 # 1 1 1 # X X 1
 # 1 1 0 # X 1 0
 #+END_SRC
-The code that resulted from that was this:
+
+The reason we use breadth-first is that we want to explore the neighbours of all 0s to mark them as being distance 1 before we continue diving deeper into the tree. Using a queue as the auxiliary data structure guarantees that all points at distance 1 from a 0 will be explored before all points at distance 2 and so on and so forth.
 
 #+BEGIN_SRC python
 class Solution:
@@ -75,11 +76,14 @@ class Solution:
         ret = []
         visited = []
         discovered = []
+
+        # I initialize the auxiliary data structures.
         for row in mat:
             ret.append([math.inf for elem in row])
             visited.append([False for elem in row])
             discovered.append([False  for elem in row])
-        
+
+        # I create a queue and prepopulate it with all 0s
         queue = []
         for i, row in enumerate(mat):
             for j, elem in enumerate(row):
@@ -87,6 +91,7 @@ class Solution:
                     queue.append((i,j))
                     discovered[i][j] = True
         
+        # I traverse the matrix once and update ret[i][j] to the minimum of it's one value or 1 + the value of another visited neighbour
         while queue:
             i, j = queue.pop(0)
             visited[i][j] = True
