@@ -1,0 +1,15 @@
+#+title: Math
+This is a category on it's own... Problems that are not particularly difficult but involve some math notation (?)
+* Problems:
+** [[https://leetcode.com/problems/k-closest-points-to-origin/description/][K Closest Points to Origin]]
+This was a nice quick problem. The BTTC is at most O(nf(n)) where f(n) is the fastest way of comparing an element with all other elements in the array that prove we are getting the k smaller points.
+
+A nice easy solution is to get all points and sort them using the euclidean distance as key (nit: we can also use the square since the square over positive numbers preserves inequality). We return the first k.
+
+#+BEGIN_SRC python
+class Solution:
+    def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
+        return sorted(points, key=lambda x: x[0]**2 + x[1]**2)[:k]
+#+END_SRC
+
+Should not be classified as Medium...
