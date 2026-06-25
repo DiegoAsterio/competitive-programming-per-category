@@ -1,0 +1,43 @@
+#+title: Hash table
+Another weird category, leetcode has is so who am I to blame...
+* Problems:
+** [[https://leetcode.com/problems/implement-trie-prefix-tree/description/][Implement Trie (Prefix Tree)]]
+I really enjoyed completing this problem. I use a defaultdict to create the trie. A default dictionary is a collection from python's default library that uses a predefined function to populate a value in a dictionary if the value is not in the dictionary. We use that fact plus recursion to build the trie implicitly at every level of the trie one will call call the trie_init that returns a defaultdict that uses trie_init as a function to generate the next level.
+
+That being said our new trie object is really easy to use, one would just traverse the levels one by one adding one char at each time. Once we reach the level were the word is we write it down in the key d['word'] = True.
+
+#+BEGIN_SRC python
+from collections import defaultdict
+
+class Trie:
+    def __init__(self):
+        def trie_init():
+            return defaultdict(trie_init)
+        self.trie = defaultdict(trie_init)
+
+    def insert(self, word: str) -> None:
+        trie_level = self.trie
+        for char in word:
+            trie_level = trie_level[char]
+        trie_level['word'] = True
+
+    def search(self, word: str) -> bool:
+        trie_level = self.trie
+        for char in word:
+            if char not in trie_level:
+                return False
+            else:
+                trie_level = trie_level[char]
+        return trie_level['word'] == True
+
+    def startsWith(self, prefix: str) -> bool:
+        trie_level = self.trie
+        for char in prefix:
+            if char not in trie_level:
+                return False
+            else:
+                trie_level = trie_level[char]
+        return True
+#+END_SRC
+
+
