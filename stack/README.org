@@ -33,5 +33,30 @@ class Solution:
 #+END_SRC
 
 Pitfall: I decided to use the integer division which results in incorrect results when the numerator is a negative number e.g. 6//-132 == -1 (?)
+** [[https://leetcode.com/problems/min-stack/][155. Min Stack]]
 
+In this problem they ask us to implement a stack that keeps track of the minimum value in the stack at each state. We do this using a stack that stores pairs of numbers.
+The first number is the number we are pushing onto the stack and the second the local minimum.
 
+#+BEGIN_SRC python
+class MinStack:
+
+    def __init__(self):
+        self.stack = []
+
+    def push(self, value: int) -> None:
+        self.stack.append((value, min(self.getMin(),value)))
+
+    def pop(self) -> None:
+        x_min = self.stack.pop() 
+        return x_min[0]
+
+    def top(self) -> int:
+        return self.stack[-1][0]
+
+    def getMin(self) -> int:
+        if self.stack:
+            return self.stack[-1][1]
+        else:
+            return math.inf
+#+END_SRC
