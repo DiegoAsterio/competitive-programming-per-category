@@ -1,0 +1,65 @@
+#+title: Prefix sum
+* Problems:
+** [[https://leetcode.com/problems/product-of-array-except-self/description/][238. Product of Array Except Self]]
+In this problem we have an array of numbers and at each position we want to store the product of all elements of nums except for the number in the position itself.
+First some clarifications.
+
+Can the array be empty or have one element?
+No 2 <= nums.length <= 10^5
+The problem statement also discusses that the algorithm should run in O(n) time and not to use the division operation.
+
+First of all consider an easy example:
+
+Example 1:
+Input: nums = [1, 2]
+Output: [2, 1]
+
+Example 2:
+Input: nums = [1, 2, 3, 4]
+Output: [24, 12, 8, 6]
+
+Example 3:
+Input: nums = [-1, -1, 0, -3, 3]
+Output: [0, 0, -9, 0, 0]
+
+This problem can be solved using a prefix sum pattern. We can create a copy of the current array and then traverse the copy from left to right from index 0 to size - 2.
+
+At each index we will store the product of the element it has in the left hence we will have at each index i the product of all elements from 0 to i.
+
+Once we arrive at the end of the for loop we will traverse the original array from right to left starting with index size - 1 to index 1.
+
+At each index we will do two things:
+1. store in original at index the element that original has at their right position (index+1).
+2. store in the result array the product of  left_or_default(result, index) * right_or_default(original, index)
+
+We'll introduce two auxiliary functions left_or_default and right_or_default that return an element in an array or 1 if index is out of bound 
+
+#+BEGIN_SRC python
+def left_or_unit(nums, index):
+    if index == 0:
+        return 1
+    else:
+        return nums[index-1]
+
+def right_or_unit(nums, index):
+    if index + 1 >= len(nums):
+        return 1
+    else:
+        return nums[index+1]
+
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        nums_copy = nums[:]
+
+        for i in range(len(nums)-1):
+            nums_copy[i] *= left_or_unit(nums_copy, i)
+        
+        for i in reversed(range(0, len(nums))):
+            nums[i] *= right_or_unit(nums, i)
+            nums_copy[i] = left_or_unit(nums_copy, i) * right_or_unit(nums, i)
+        
+        return nums_copy
+#+END_SRC
+
+** 
+
