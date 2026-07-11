@@ -87,4 +87,45 @@ class Solution:
 #+END_SRC
 
 The idea behind the code is very similar although this algorithm does not finish early and traverses the tree completely.
+** [[https://leetcode.com/problems/number-of-islands/][200. Number of Islands]]
+They are asking to understand what is the number of connected components made up of 1s. To solve this problem I used a set that contains all 1s and then extract a random one for that set to traverse the component that that 1 belongs to. While traversing the grid we remove ones from the the set.
 
+#+BEGIN_SRC python
+def get_neighbors(current, grid):
+    ret = []
+    if current[0] > 0:
+        ret.append((current[0]-1, current[1]))
+    if current[0] + 1 < len(grid):
+        ret.append((current[0]+1, current[1]))
+    if current[1] > 0:
+        ret.append((current[0], current[1]-1))
+    if current[1] + 1 < len(grid[0]): # n, m >= 1
+        ret.append((current[0], current[1]+1))
+    return ret
+
+def discover_connected_component(point, q, grid):
+    stack = [point]
+
+    while stack:
+        current = stack.pop()
+        for neighbor in get_neighbors(current, grid):
+            if neighbor in q:
+                stack.append(neighbor)
+                q.remove(neighbor)
+
+class Solution:
+    def numIslands(self, grid: List[List[str]]) -> int:
+        ret = 0
+        ones = set()
+        for i, row in enumerate(grid):
+            for j, val in enumerate(row):
+                if grid[i][j] == "1":
+                    ones.add((i,j))
+
+        while ones:
+            point = ones.pop()
+            discover_connected_component(point, ones, grid)
+            ret += 1
+        
+        return ret
+#+END_SRC
