@@ -31,4 +31,60 @@ class Solution:
         
         return longest_path_between_two_nodes
 #+END_SRC
+** [[https://leetcode.com/problems/validate-binary-search-tree/][98. Validate Binary Search Tree]]
+
+To complete this problem I traversed the BST recursively in a DFS fashion. At each point we compare the current value with the min value and max value that has been seen in that branch of the tree. If at some point we see that the current value is greater or equal than the max value of the the explored tree up until that point we return false. If at asome point we see that the converse statement is true (i.e. that the current value is less or equal than the minimum value of the explored tree up until that point).
+
+Last but not least we check that the left and right subtrees are also valid. We use the current value as the maximum value expected for the left subtree and as the minimum for the right subtree.
+
+#+BEGIN_SRC python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        def is_valid_bst(node, min_val, max_val):
+            if not node:
+                return True
+            if node.val <= min_val or max_val <= node.val:
+                return False
+            return is_valid_bst(node.left, min_val, node.val) and is_valid_bst(node.right, node.val, max_val) 
+        
+        return is_valid_bst(root, -math.inf, math.inf)
+#+END_SRC
+
+I originally did an uglier version of the same algorithm:
+
+#+BEGIN_SRC python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+def isValidBSTAux(root):
+    if root.left:
+        is_valid_left, min_left, max_left = isValidBSTAux(root.left)
+    else:
+        is_valid_left, min_left, max_left = True, math.inf, -math.inf
+    
+    if root.right:
+        is_valid_right, min_right, max_right = isValidBSTAux(root.right)
+    else:
+        is_valid_right, min_right, max_right = True, math.inf, -math.inf
+    
+    return max_left < root.val and root.val < min_right and is_valid_left and is_valid_right, min([min_left, min_right, root.val]), max([max_left, max_right, root.val])
+
+class Solution:
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        if not root:
+            return True
+        
+        return isValidBSTAux(root)[0]
+#+END_SRC
+
+The idea behind the code is very similar although this algorithm does not finish early and traverses the tree completely.
 
