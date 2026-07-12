@@ -83,8 +83,51 @@ class Solution:
     
         return [[start_i, end_i] for start_i, end_i in zip(ret[::2], ret[1::2])]
 #+END_SRC
+** [[https://leetcode.com/problems/search-in-rotated-sorted-array/description/][33. Search in Rotated Sorted Array]]
+To solve this problem the first thing you need to notice is that one can retrieve the exact point at which the array is divided into two sorted arrays using a binary search argument. Lets say that m is the minimum value in the array and M is the maximum value in the array since the original array was a non decreasing array composed only of different numbers we would have that before the rotation the array will look like this:
+m, y0, y1, y2, ..., M
+After the rotation we would have:
+x0, ..., M, m, ..., xn-1
+where x0, ..., M and m, ..., xn-1 are non decreasing arrays.
+We can return the exact index at which M is sitting using the following algorithm. We follow a binary search solution only that in this case if x[l] <= x[mid] we move left to mid and the opposite in the other case. What we have is that in log(n) steps we would get index of M. We've called this method get_partition_index 
+#+BEGIN_SRC python
+def find_partition(nums):
+    left = 0
+    right = len(nums)
 
-
+    while left + 1 < right:
+        mid = (left + right)//2
+        if nums[left] <= nums[mid]:
+            left = mid
+        else:
+            right = mid
+    
+    return left
+#+END_SRC
+NOTE: Notice that the k used in the problem statement is n - find_partition(nums).
+Then once we know the index at which the partition is we just need to do a regular binary search over the subarray that is sorted:
+#+BEGIN_SRC python
+class Solution:
+    def search(self, nums: List[int], target: int) -> int:
+        index = find_partition(nums)
+        if nums[0] <= target and target <= nums[index]:
+            left = 0
+            right = index + 1
+        else:
+            left = index + 1
+            right = len(nums)
+        
+        while left + 1 < right:
+            mid = (left + right)//2
+            if nums[mid] <= target:
+                left = mid
+            else:
+                right = mid
+        
+        if left >= len(nums) or nums[left] != target:
+            return -1
+        return left
+#+END_SRC
 
 
 
