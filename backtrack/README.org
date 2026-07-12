@@ -1,0 +1,79 @@
+#+title: Backtrack
+Problems that can be solve using [[https://en.wikipedia.org/wiki/Backtracking][Backtracking.]]
+* Problems
+** [[https://leetcode.com/problems/combination-sum/description/][39. Combination Sum]]
+The idea behind this problem is to keep on adding integers to a sum until the sum adds up to target. If adding another number overpasses the target then we don't add it.
+We use backtracking by exploring the tree of adding the same integer on and on until we either sum up to the target or pass it that's when we stop exploring that branch of the tree.
+#+BEGIN_SRC python
+class Solution:
+    def set_up(self, candidates, target):
+        self.solutions = []
+        self.candidates = sorted(candidates)
+        self.candidate_index = {val: index for index, val in enumerate(self.candidates)}
+        self.target = target
+
+    def chose_relevant_candidates(self, partial_solution, partial_sum):
+        ret = []
+        start = self.candidate_index[partial_solution[-1]] if partial_solution else 0
+
+        for i in range(start, len(self.candidates)):
+            candidate = self.candidates[i]
+            if partial_sum + candidate <= self.target:
+                ret.append(candidate)
+        
+        return ret
+                            
+
+    def backtrack(self, partial_solution, partial_sum):
+        if (partial_sum == self.target):
+            self.solutions.append(partial_solution[:])
+        else:
+            chosen_candidates = self.chose_relevant_candidates(partial_solution, partial_sum)
+            for elem in chosen_candidates:
+                partial_solution.append(elem)
+                self.backtrack(partial_solution, partial_sum + elem)
+                partial_solution.pop()
+
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        self.set_up(candidates, target)
+
+        self.backtrack([], 0)
+        
+        return self.solutions
+#+END_SRC
+** [[https://leetcode.com/problems/permutations/][46. Permutations]]
+At each step we try to add another number to the partial solution that we are building. The set of elements from which we can choose is the numbers that have not appeared in the partial solution yet. 
+#+BEGIN_SRC python
+from collections import defaultdict
+
+class Solution:
+    def __init__(self):
+        self.solutions = []
+
+    def generate_candidates(self, partial_solution, nums):
+        candidates = []
+        set_partial_solution = set(partial_solution)
+        for num in nums:
+            if num not in set_partial_solution:
+                candidates.append(num)
+        return candidates
+
+    def backtrack(self, partial_solution, nums):
+        if len(partial_solution) == len(nums):
+            self.solutions.append(partial_solution[:])
+        else:
+            candidates = self.generate_candidates(partial_solution, nums)
+            for candidate in candidates:
+                partial_solution.append(candidate)
+                self.backtrack(partial_solution, nums)
+                partial_solution.pop()
+
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        self.backtrack([], nums)
+
+        return self.solutions
+#+END_SRC
+
+
+
+
