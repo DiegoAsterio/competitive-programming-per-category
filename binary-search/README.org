@@ -128,6 +128,40 @@ class Solution:
             return -1
         return left
 #+END_SRC
+** [[https://leetcode.com/problems/time-based-key-value-store/description/][981. Time Based Key-Value Store]]
+In this problem we need to design a time-based key-value data structure. It should store multiple values for the same key.
 
+My proposal is to have a dictionary where every key maps to an array and the array contains [(timestamp, value)]. Insertion will happen in O(log(n)) since we need to find the index at which the timestamp should be inserted (although after looking at other people solution I think I over engineered this a little bit since it's guaranteed that timestamps will always be non decreasing). And get will be O(log(n)).
+
+#+BEGIN_SRC python
+from collections import defaultdict
+class TimeMap:
+    def binary_search(self, key, timestamp):
+        values = self.d[key]
+        left, right = 0, len(values)
+        while left + 1 < right:
+            mid = (left+right)//2
+            if values[mid][0] <= timestamp:
+                left = mid
+            else:
+                right = mid
+        return left
+
+    def __init__(self):
+        self.d = defaultdict(lambda: [(-math.inf, "")])
+
+    def set(self, key: str, value: str, timestamp: int) -> None:
+        index = self.binary_search(key, timestamp)
+
+        if self.d[key][index][0] == timestamp:
+            self.d[key][index] = (timestamp, value)
+        else:
+            self.d[key].insert(index + 1, (timestamp, value))
+
+    def get(self, key: str, timestamp: int) -> str:
+
+        index = self.binary_search(key, timestamp)
+        return self.d[key][index][1]
+#+END_SRC
 
 
