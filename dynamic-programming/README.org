@@ -121,3 +121,33 @@ class Solution:
         
         return memo[-1][-1] if memo[-1][-1] != math.inf else -1
 #+END_SRC
+** [[https://leetcode.com/problems/partition-equal-subset-sum/][416. Partition Equal Subset Sum]]
+This problem can be reduced into [[https://www.geeksforgeeks.org/dsa/0-1-knapsack-problem-dp-10/][the 0/1 knapsack problem]]. The way we can do this is by following this observation. Partitioning the input array would happen if the sum of all of it's numbers can be divided evenly in two that is to say that we can have a subset of the numbers that adds up to the same amount as the other subset. Hence the total sum of nums must be 2*sum where sum is the sum of each partition. A way to proceed would be to add up all the numbers in the input array and verify if the sum is even then we can try and solve the 0/1 knapsack problem for knapsack of size sum and if it returns sum we are sure that the partition can happen.
+
+#+BEGIN_SRC python
+class Solution:
+    def knapsack_bottom_up(self, w, nums):
+        memo = [[0]*(w + 1) for _ in range(len(nums)+1)]
+
+        for i in range(1, len(nums)+1):
+            for j in range(1, w+1):
+                pick = 0
+
+                if nums[i-1] <= j:
+                    pick = nums[i-1] + memo[i-1][j-nums[i-1]]
+                
+                not_pick = memo[i-1][j]
+
+                memo[i][j] = max(pick, not_pick)
+        
+        return memo[len(nums)][w]
+
+    def canPartition(self, nums: List[int]) -> bool:
+        sum_all_numbers = sum(nums)
+        if sum_all_numbers%2:
+            return False
+        
+        target_sum = sum_all_numbers//2
+
+        return self.knapsack_bottom_up(target_sum, nums) == target_sum
+#+END_SRC
